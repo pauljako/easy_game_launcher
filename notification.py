@@ -7,7 +7,7 @@ import tkinter as tk
 def notification_simple(text: str, description: str, delay):
     window = tk.Tk(className="easy-game-launcher")
     window.overrideredirect(True)
-    window.geometry("200x50+0+0")
+    window.geometry("225x50+0+0")
     window.attributes('-topmost', True)
     window.after(delay, window.destroy)
 
