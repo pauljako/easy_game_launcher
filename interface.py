@@ -49,7 +49,7 @@ def main():
     account_frame.grid_columnconfigure(0, weight=1)
     username = customtkinter.CTkLabel(account_frame, text=account["name"])
     username.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
-    status_label = customtkinter.CTkLabel(account_frame, text=session.status)
+    status_label = customtkinter.CTkLabel(account_frame, text=session.get_status())
     status_label.grid(row=1, column=0, pady=5, padx=5, sticky="ew")
     exit_button = customtkinter.CTkButton(account_frame, text="Exit", command=session.exit_session)
 
@@ -79,7 +79,7 @@ def main():
     while True:
         app.update()
         app.update_idletasks()
-        status_label.configure(text=session.status)
+        status_label.configure(text=session.get_status())
         if session.get_session() is not None:
             exit_button.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
         else:
