@@ -15,3 +15,13 @@ SESSION_PATH = os.path.realpath(os.path.join(CONFIG_DIR, "session.pkl"))
 TICK_OBJ_PATH = os.path.realpath(os.path.join(CONFIG_DIR, "tick.pkl"))
 
 TICK_THREAD_PATH = os.path.realpath(os.path.join(CONFIG_DIR, "tick_thread.pkl"))
+
+MESSAGE_PATH = os.path.realpath(os.path.join(CONFIG_DIR, "message"))
+
+OPEN_UI_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "open_ui"))
+
+LAUNCH_GAME_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "launch"))
+
+IS_RUNNING_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "is-running"))
+
+KILL_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "kill"))

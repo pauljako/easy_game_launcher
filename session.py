@@ -1,7 +1,6 @@
 import json
-# import pickle
-import dill as pickle
-
+import tick
+import dill
 import notification
 import os
 import vars
@@ -43,7 +42,7 @@ def get_session() -> Session | None:
         return None
     try:
         with open(vars.SESSION_PATH, "rb") as f:
-            return pickle.load(f)
+            return dill.load(f)
     except EOFError:
         return None
 
@@ -62,7 +61,7 @@ def set_status(new_status: str = "Online") -> None:
         return
     session.status = new_status
     with open(vars.SESSION_PATH, "wb") as f:
-        pickle.dump(session, f)
+        dill.dump(session, f)
 
 
 def exit_session():
@@ -82,5 +81,5 @@ def new_session(name: str):
         return
     session = Session(name, games, "Playing " + name)
     with open(vars.SESSION_PATH, "wb") as f:
-        pickle.dump(session, f)
+        dill.dump(session, f)
     get_session().start()

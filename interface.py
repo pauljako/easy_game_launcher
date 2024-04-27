@@ -1,22 +1,32 @@
 import json
 import threading
 import time
+import tkinter.filedialog
+
+import notification
 import vars
 import session
+import tick
 
 import customtkinter
 import os
 from PIL import Image
 
+# Load Games
 with open(vars.GAME_PATH, "rb") as f:
     games = json.load(f)
 
 with open(vars.ACCOUNT_PATH, "rb") as f:
     account = json.load(f)
 
+# Define Global Variables
 status_label: customtkinter.CTkLabel
+exited: bool = False
+app: customtkinter.CTk = None
+exit_button: customtkinter.CTkButton
 
 
+# Frame that shows the Game List
 class GameFrame(customtkinter.CTkFrame):
     def __init__(self, master, name, icon: Image, **kwargs):
         super().__init__(master, **kwargs)
@@ -32,6 +42,7 @@ class GameFrame(customtkinter.CTkFrame):
         self.launch_button.grid(row=1, column=1, pady=5, padx=5, sticky="ew")
 
 
+# Frame that shows the Friends List
 class FriendFrame(customtkinter.CTkFrame):
     def __init__(self, master, name: str, id: int, **kwargs):
         super().__init__(master, **kwargs)
@@ -42,14 +53,44 @@ class FriendFrame(customtkinter.CTkFrame):
         self.label.grid(row=0, column=0, pady=5, padx=5, sticky="ew", columnspan=2)
 
 
+# Window for adding Games
 class AddGameWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.geometry("400x300")
+        self.geometry("300x500")
         self.title("Add Game")
+        self.columnconfigure(0, weight=4)
+        self.columnconfigure(1, weight=1)
 
         self.label = customtkinter.CTkLabel(self, text="Add Game")
-        self.label.pack(padx=20, pady=20)
+        self.label.grid(padx=20, pady=20, row=0, column=0, sticky="ew", columnspan=2)
+
+        self.name_entry = customtkinter.CTkEntry(self, placeholder_text="Name")
+        self.name_entry.grid(padx=20, pady=20, row=1, column=0, sticky="ew", columnspan=2)
+
+        self.cmd_entry = customtkinter.CTkEntry(self, placeholder_text="Launch Command")
+        self.cmd_entry.grid(padx=20, pady=20, row=2, column=0, sticky="ew", columnspan=2)
+
+        self.icon_entry = customtkinter.CTkEntry(self, placeholder_text="Path to Icon")
+        self.icon_entry.grid(padx=20, pady=20, row=3, column=0, sticky="ew")
+
+        self.icon_browse = customtkinter.CTkButton(self, command=self.browse_icon, text="Browse")
+        self.icon_browse.grid(padx=20, pady=20, row=3, column=1, sticky="ew")
+
+        self.save_button = customtkinter.CTkButton(self, command=self.save, text="Add")
+        self.save_button.grid(padx=20, pady=20, row=4, column=0, sticky="ew", columnspan=2)
+
+    def browse_icon(self):
+        icon = tkinter.filedialog.askopenfilename(title="Select Icon")
+
+        self.icon_entry.insert(tkinter.END, icon)
+
+    def save(self):
+
+        icon = self.icon_entry.get()
+
+        if icon == "":
+            self.browse_icon()
 
 
 add_game_window: AddGameWindow = None
@@ -63,16 +104,36 @@ def add_game(master):
         add_game_window.focus()
 
 
-def main():
-    global status_label
+def win_quit():
+    global exited
+    exited = True
 
-    app = customtkinter.CTk(className="easy-game-launcher")
 
-    app.title("Easy Game Launcher")
-    app.geometry("500x550")
-    app.grid_columnconfigure(0, weight=1)
-    app.grid_rowconfigure(0, weight=0)
-    app.grid_rowconfigure(1, weight=1)
+@tick.on_tick(21)
+def win_update():
+    global status_label, app, exited, exit_button
+    if app is None:
+        if vars.VERBOSE:
+            print("[ Interface | Warning ] App is None. Not updating")
+        return
+    app.update()
+    app.update_idletasks()
+    if exited:
+        if vars.VERBOSE:
+            print("[ Interface | Info ] App exiting")
+        #notification.send("EGL Running", "Easy Game Launcher is still running in the Background", delay=1500)
+        app.destroy()
+        app = None
+        return
+    status_label.configure(text=session.get_status())
+    if session.get_session() is not None:
+        exit_button.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
+    else:
+        exit_button.grid_forget()
+
+
+def draw():
+    global status_label, app, exited, exit_button
 
     account_frame = customtkinter.CTkFrame(app)
     account_frame.grid(row=0, column=0, padx=10, pady=5, sticky="new")
@@ -94,14 +155,19 @@ def main():
     tab_view.set("Games")
 
     game_scrollable_frame = customtkinter.CTkScrollableFrame(game_tab, label_text="Games", fg_color="transparent")
-    game_scrollable_frame.bind_all("<Button-4>", lambda e: game_scrollable_frame._parent_canvas.yview("scroll", -1, "units"))
-    game_scrollable_frame.bind_all("<Button-5>", lambda e: game_scrollable_frame._parent_canvas.yview("scroll", 1, "units"))
+    game_scrollable_frame.bind_all("<Button-4>",
+                                   lambda e: game_scrollable_frame._parent_canvas.yview("scroll", -1, "units"))
+    game_scrollable_frame.bind_all("<Button-5>",
+                                   lambda e: game_scrollable_frame._parent_canvas.yview("scroll", 1, "units"))
     game_scrollable_frame.grid_columnconfigure(0, weight=1)
     game_scrollable_frame.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
 
-    friends_scrollable_frame = customtkinter.CTkScrollableFrame(friends_tab, label_text="Friends", fg_color="transparent")
-    friends_scrollable_frame.bind_all("<Button-4>", lambda e: friends_scrollable_frame._parent_canvas.yview("scroll", -1, "units"))
-    friends_scrollable_frame.bind_all("<Button-5>", lambda e: friends_scrollable_frame._parent_canvas.yview("scroll", 1, "units"))
+    friends_scrollable_frame = customtkinter.CTkScrollableFrame(friends_tab, label_text="Friends",
+                                                                fg_color="transparent")
+    friends_scrollable_frame.bind_all("<Button-4>",
+                                      lambda e: friends_scrollable_frame._parent_canvas.yview("scroll", -1, "units"))
+    friends_scrollable_frame.bind_all("<Button-5>",
+                                      lambda e: friends_scrollable_frame._parent_canvas.yview("scroll", 1, "units"))
     friends_scrollable_frame.grid_columnconfigure(0, weight=1)
     friends_scrollable_frame.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
 
@@ -130,11 +196,20 @@ def main():
         friend_list_row += 1
         i.grid(row=friend_list_row, column=0, padx=5, pady=5, sticky="ew")
 
-    while True:
-        app.update()
-        app.update_idletasks()
-        status_label.configure(text=session.get_status())
-        if session.get_session() is not None:
-            exit_button.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
-        else:
-            exit_button.grid_forget()
+
+def main():
+    global status_label, app, exited, exit_button
+
+    exited = False
+
+    app = customtkinter.CTk(className="easy-game-launcher")
+
+    app.title("Easy Game Launcher")
+    app.geometry("500x550")
+    app.protocol("WM_DELETE_WINDOW", win_quit)
+    app.wm_protocol("WM_DELETE_WINDOW", win_quit)
+    app.grid_columnconfigure(0, weight=1)
+    app.grid_rowconfigure(0, weight=0)
+    app.grid_rowconfigure(1, weight=1)
+
+    draw()

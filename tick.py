@@ -1,25 +1,26 @@
 import os.path
+import threading
 
 import dill
 
 import vars
 
+tick_objs: dict = {}
+
 
 def get_tick_objs() -> dict:
-    if not os.path.exists(vars.TICK_OBJ_PATH):
-        return {}
-    with open(vars.TICK_OBJ_PATH, "rb") as f:
-        data = dill.load(f)
+    global tick_objs
+    data = tick_objs
     if not isinstance(data, dict):
         return {}
     return data
 
 
 def add_tick_obj(id: str, func):
+    global tick_objs
     objs = get_tick_objs()
     objs[id] = func
-    with open(vars.TICK_OBJ_PATH, "wb") as f:
-        dill.dump(objs, f)
+    tick_objs = objs
 
 
 def on_tick(id: int):
@@ -35,22 +36,10 @@ def on_tick(id: int):
 
 
 def tick():
-    while True:
-        objs = get_tick_objs()
-        for id, func in objs.values():
-            if vars.VERBOSE:
-                print("Running " + id)
-            func()
-
-
-print(get_tick_objs())
-
-
-@on_tick(0)
-def say_hi():
-    print("hi")
-
-
-print(get_tick_objs())
-
-say_hi()
+    objs = get_tick_objs()
+    for id in objs:
+        func = objs[id]
+        if vars.VERBOSE:
+            # print("[ Tick | Info ] Running " + id)
+            pass
+        func()
