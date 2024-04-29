@@ -12,21 +12,41 @@ if __name__ == "__main__":
 
     running = True
 
-    parser = argparse.ArgumentParser(prog="Easy Game Launcher")
+    parser = argparse.ArgumentParser(prog="Easy Game Launcher", epilog="If no arguments are passed, the Interface "
+                                                                       "will be opened")
 
-    parser.add_argument("--launch", "-l")
+    parser.add_argument("--launch", "-l", help="Launches the specified Game", metavar="game")
+    parser.add_argument("--quit", "-q", help="Quits EGL", action="store_true")
+    parser.add_argument("--exit", "-e", help="Exits the Session", action="store_true")
 
     args = parser.parse_args()
+
+    if vars.VERBOSE:
+        print("[ Main | Info ] Triggering Hook: is-running")
 
     with open(vars.IS_RUNNING_MSG_PATH, "wt"):
         pass
 
-    if args.launch is None:
-        with open(vars.OPEN_UI_MSG_PATH, "wt"):
+    if args.quit:
+        if vars.VERBOSE:
+            print("[ Main | Info ] Triggering Hook: kill")
+        with open(vars.KILL_MSG_PATH, "wt"):
             pass
-    else:
+    elif args.exit:
+        if vars.VERBOSE:
+            print("[ Main | Info ] Triggering Hook: exit")
+        with open(vars.EXIT_MSG_PATH, "wt"):
+            pass
+    elif args.launch is not None:
+        if vars.VERBOSE:
+            print("[ Main | Info ] Triggering Hook: launch")
         with open(vars.LAUNCH_GAME_MSG_PATH, "wt") as f:
             f.write(args.launch)
+    else:
+        if vars.VERBOSE:
+            print("[ Main | Info ] Triggering Hook: open-ui")
+        with open(vars.OPEN_UI_MSG_PATH, "wt"):
+            pass
 
     time.sleep(0.5)
 
