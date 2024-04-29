@@ -24,6 +24,7 @@ status_label: customtkinter.CTkLabel
 exited: bool = False
 app: customtkinter.CTk = None
 exit_button: customtkinter.CTkButton
+exit_triggered: bool = False
 
 
 # Frame that shows the Game List
@@ -105,24 +106,23 @@ def add_game(master):
 
 
 def win_quit():
-    global exited
-    exited = True
+    global exit_triggered
+    exit_triggered = True
 
 
 @tick.on_tick(21)
 def win_update():
-    global status_label, app, exited, exit_button
+    global status_label, app, exited, exit_button, exit_triggered
     if app is None:
-        if vars.VERBOSE:
-            print("[ Interface | Warning ] App is None. Not updating")
         return
     app.update()
     app.update_idletasks()
-    if exited:
+    if exit_triggered:
         if vars.VERBOSE:
             print("[ Interface | Info ] App exiting")
         #notification.send("EGL Running", "Easy Game Launcher is still running in the Background", delay=1500)
         app.destroy()
+        app.update()
         app = None
         return
     status_label.configure(text=session.get_status())
@@ -198,9 +198,10 @@ def draw():
 
 
 def main():
-    global status_label, app, exited, exit_button
+    global status_label, app, exited, exit_button, exit_triggered
 
     exited = False
+    exit_triggered = False
 
     app = customtkinter.CTk(className="easy-game-launcher")
 
