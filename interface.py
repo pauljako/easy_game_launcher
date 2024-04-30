@@ -1,4 +1,5 @@
 import json
+import shutil
 import threading
 import time
 import tkinter.filedialog
@@ -16,6 +17,7 @@ from PIL import Image
 with open(vars.GAME_PATH, "rb") as f:
     games = json.load(f)
 
+# Load Account
 with open(vars.ACCOUNT_PATH, "rb") as f:
     account = json.load(f)
 
@@ -92,6 +94,21 @@ class AddGameWindow(customtkinter.CTkToplevel):
 
         if icon == "":
             self.browse_icon()
+
+        icon = self.icon_entry.get()
+
+        if icon == "":
+            return
+
+        new_icon_name = self.name_entry.get().lower().replace(" ", "_")
+        new_icon_path = str(os.path.join(vars.ICON_DIR, new_icon_name))
+
+        new_icon_path = shutil.copy(icon, new_icon_path)
+
+        saved_data = {"cmd": self.cmd_entry.get(), "icon": new_icon_path}
+        games[self.name_entry.get()] = saved_data
+        with open(vars.GAME_PATH, "wt") as f:
+            json.dump(games, f)
 
 
 add_game_window: AddGameWindow = None
