@@ -19,7 +19,8 @@ def process_messages():
                 os.remove(vars.IS_RUNNING_MSG_PATH)
                 break
             except:
-                print("Error")
+                if vars.VERBOSE:
+                    print("[ Message | Error ] Failed to delete Message. Trying again")
     if os.path.exists(vars.KILL_MSG_PATH):
         if vars.VERBOSE:
             print("[ Message | Info ] Processing Hook: kill")
@@ -28,7 +29,8 @@ def process_messages():
                 os.remove(vars.KILL_MSG_PATH)
                 break
             except:
-                print("Error")
+                if vars.VERBOSE:
+                    print("[ Message | Error ] Failed to delete Message. Trying again")
         if session.get_session() is not None:
             session.exit_session()
         sys.exit()
@@ -40,7 +42,8 @@ def process_messages():
                 os.remove(vars.OPEN_UI_MSG_PATH)
                 break
             except:
-                print("Error")
+                if vars.VERBOSE:
+                    print("[ Message | Error ] Failed to delete Message. Trying again")
         if interface.app is not None:
             if vars.VERBOSE:
                 print("[ Message | Warning ] Another Window is already opened")
@@ -56,7 +59,8 @@ def process_messages():
                 os.remove(vars.LAUNCH_GAME_MSG_PATH)
                 break
             except:
-                print("Error")
+                if vars.VERBOSE:
+                    print("[ Message | Error ] Failed to delete Message. Trying again")
         notification.send("Game started", f"Game {game} started.", 1500)
         session.new_session(game)
     if os.path.exists(vars.EXIT_MSG_PATH):
@@ -67,5 +71,6 @@ def process_messages():
                 os.remove(vars.EXIT_MSG_PATH)
                 break
             except:
-                print("Error")
+                if vars.VERBOSE:
+                    print("[ Message | Error ] Failed to delete Message. Trying again")
         session.exit_session()
