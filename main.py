@@ -30,8 +30,8 @@ if __name__ == "__main__":
     if vars.VERBOSE:
         print("[ Main | Info ] Triggering Hook: is-running")
 
-    with open(vars.IS_RUNNING_MSG_PATH, "wt"):
-        pass
+    f = open(vars.IS_RUNNING_MSG_PATH, "wt")
+    f.close()
 
     if args.quit:
         if vars.VERBOSE:
