@@ -29,7 +29,7 @@ def process_messages():
             if vars.VERBOSE:
                 print("[ Message | Warning ] Another Window is already opened")
             return
-        interface.main()
+        interface.open_ui()
     if os.path.exists(vars.LAUNCH_GAME_MSG_PATH):
         if vars.VERBOSE:
             print("[ Message | Info ] Processing Hook: launch")

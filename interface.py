@@ -3,7 +3,7 @@ import shutil
 import threading
 import time
 import tkinter.filedialog
-
+import main
 import notification
 import vars
 import session
@@ -12,14 +12,6 @@ import tick
 import customtkinter
 import os
 from PIL import Image
-
-# Load Games
-with open(vars.GAME_PATH, "rb") as f:
-    games = json.load(f)
-
-# Load Account
-with open(vars.ACCOUNT_PATH, "rb") as f:
-    account = json.load(f)
 
 # Define Global Variables
 status_label: customtkinter.CTkLabel
@@ -106,9 +98,9 @@ class AddGameWindow(customtkinter.CTkToplevel):
         new_icon_path = shutil.copy(icon, new_icon_path)
 
         saved_data = {"cmd": self.cmd_entry.get(), "icon": new_icon_path}
-        games[self.name_entry.get()] = saved_data
+        main.games[self.name_entry.get()] = saved_data
         with open(vars.GAME_PATH, "wt") as f:
-            json.dump(games, f)
+            json.dump(main.games, f)
 
 
 add_game_window: AddGameWindow = None
@@ -155,7 +147,7 @@ def draw():
     account_frame = customtkinter.CTkFrame(app)
     account_frame.grid(row=0, column=0, padx=10, pady=5, sticky="new")
     account_frame.grid_columnconfigure(0, weight=1)
-    username = customtkinter.CTkLabel(account_frame, text=account["name"])
+    username = customtkinter.CTkLabel(account_frame, text=main.account["name"])
     username.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
     status_label = customtkinter.CTkLabel(account_frame, text=session.get_status())
     status_label.grid(row=1, column=0, pady=5, padx=5, sticky="ew")
@@ -193,10 +185,10 @@ def draw():
     friend_list_row = 0
     friend_list = []
 
-    for g in games.keys():
+    for g in main.games.keys():
         btn_text = g
 
-        icon = Image.open(os.path.join(vars.ICON_DIR, games[g]["icon"]))
+        icon = Image.open(os.path.join(vars.ICON_DIR, main.games[g]["icon"]))
 
         game_display_obj = GameFrame(game_scrollable_frame, g, icon)
 
@@ -214,7 +206,7 @@ def draw():
         i.grid(row=friend_list_row, column=0, padx=5, pady=5, sticky="ew")
 
 
-def main():
+def open_ui():
     global status_label, app, exited, exit_button, exit_triggered
 
     exited = False

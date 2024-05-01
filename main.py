@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import os.path
 import time
-
 import tick
 import vars
 import messages
 
+# Load Games
+with open(vars.GAME_PATH, "rb") as f:
+    games = json.load(f)
+
+# Load Account
+with open(vars.ACCOUNT_PATH, "rb") as f:
+    account = json.load(f)
 
 if __name__ == "__main__":
-
-    running = True
 
     parser = argparse.ArgumentParser(prog="Easy Game Launcher", epilog="If no arguments are passed, the Interface "
                                                                        "will be opened")
@@ -56,5 +61,5 @@ if __name__ == "__main__":
 
     if vars.VERBOSE:
         print("[ Main | Info ] Starting Main Tick")
-    while running:
+    while True:
         tick.tick()
