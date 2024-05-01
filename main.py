@@ -2,6 +2,7 @@
 import argparse
 import json
 import os.path
+import sys
 import time
 import tick
 import vars
@@ -57,7 +58,7 @@ if __name__ == "__main__":
 
     if not os.path.exists(vars.IS_RUNNING_MSG_PATH):
         print("[ Main | Error ] Another Instance is already Running")
-        exit()
+        sys.exit()
 
     if vars.VERBOSE:
         print("[ Main | Info ] Starting Main Tick")

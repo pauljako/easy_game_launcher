@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 
 import interface
@@ -20,7 +21,7 @@ def process_messages():
         os.remove(vars.KILL_MSG_PATH)
         if session.get_session() is not None:
             session.exit_session()
-        exit()
+        sys.exit()
     if os.path.exists(vars.OPEN_UI_MSG_PATH):
         if vars.VERBOSE:
             print("[ Message | Info ] Processing Hook: open-ui")
