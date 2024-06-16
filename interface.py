@@ -119,7 +119,7 @@ def win_quit():
     exit_triggered = True
 
 
-@tick.on_tick(21)
+@tick.on_tick(21, 20)
 def win_update():
     global status_label, app, exited, exit_button, exit_triggered
     if app is None:

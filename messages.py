@@ -9,7 +9,7 @@ import tick
 import vars
 
 
-@tick.on_tick(10)
+@tick.on_tick(10, 1)
 def process_messages():
     if os.path.exists(vars.IS_RUNNING_MSG_PATH):
         if vars.VERBOSE:
