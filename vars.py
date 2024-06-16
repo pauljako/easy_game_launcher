@@ -20,6 +20,8 @@ MESSAGE_PATH = os.path.realpath(os.path.join(CONFIG_DIR, "message"))
 
 OPEN_UI_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "open_ui"))
 
+CLOSE_UI_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "close_ui"))
+
 LAUNCH_GAME_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "launch"))
 
 IS_RUNNING_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "is-running"))

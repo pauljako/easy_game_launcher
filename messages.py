@@ -74,3 +74,14 @@ def process_messages():
                 if vars.VERBOSE:
                     print("[ Message | Error ] Failed to delete Message. Trying again")
         session.exit_session()
+    if os.path.exists(vars.CLOSE_UI_MSG_PATH):
+        if vars.VERBOSE:
+            print("[ Message | Info ] Processing Hook: close-ui")
+        while True:
+            try:
+                os.remove(vars.CLOSE_UI_MSG_PATH)
+                break
+            except:
+                if vars.VERBOSE:
+                    print("[ Message | Error ] Failed to delete Message. Trying again")
+        interface.win_quit()

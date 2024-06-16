@@ -24,6 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("--launch", "-l", help="Launches the specified Game", metavar="game")
     parser.add_argument("--quit", "-q", help="Quits EGL", action="store_true")
     parser.add_argument("--exit", "-e", help="Exits the Session", action="store_true")
+    parser.add_argument("--close", "-c", help="Closes the Interface", action="store_true")
 
     args = parser.parse_args()
 
@@ -43,6 +44,11 @@ if __name__ == "__main__":
             print("[ Main | Info ] Triggering Hook: exit")
         with open(vars.EXIT_MSG_PATH, "wt"):
             pass
+    elif args.close:
+        if vars.VERBOSE:
+            print("[ Main | Info ] Triggering Hook: close-ui")
+            with open(vars.CLOSE_UI_MSG_PATH, "wt"):
+                pass
     elif args.launch is not None:
         if vars.VERBOSE:
             print("[ Main | Info ] Triggering Hook: launch")
