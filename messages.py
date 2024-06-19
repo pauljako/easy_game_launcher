@@ -85,3 +85,16 @@ def process_messages():
                 if vars.VERBOSE:
                     print("[ Message | Error ] Failed to delete Message. Trying again")
         interface.win_quit()
+
+
+def process_ega_messages(message: list[str]) -> list[str]:
+    if message[0] == "achievement":
+        if len(message) != 3:
+            print("[ EGA | Error ] Not enough Data Send")
+            return ["error", "not_enough_data"]
+        else:
+            if vars.VERBOSE:
+                print(f"[ EGA | Info ] Adding Achievement: {message[1]}")
+            return ["ok"]
+    else:
+        return ["error", "unknown_command"]
