@@ -2,6 +2,8 @@ import os
 
 VERBOSE = True
 
+EGA_SEPERATOR = ":-:"
+
 CONFIG_DIR = os.path.realpath(os.path.join(os.path.expanduser("~"), "EGL"))
 
 ICON_DIR = os.path.realpath(os.path.join(CONFIG_DIR, "icons"))
