@@ -1,4 +1,6 @@
 import json
+
+import api
 import tick
 import dill
 import notification
@@ -29,6 +31,8 @@ class Session:
     def start(self):
         if not self.game_thread.is_alive():
             self.game_thread.start()
+        if api.connection is None:
+            api.connect()
 
     def set_status(self, new_status: str = "Online"):
         self.status = new_status
@@ -66,6 +70,8 @@ def exit_session():
         notification.send("Cannot exit session", "There is no Game running", 4000)
         return
     os.remove(vars.SESSION_PATH)
+    if api.connection is not None:
+        api.disconnect()
 
 
 def new_session(name: str):
