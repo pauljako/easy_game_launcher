@@ -102,6 +102,9 @@ class AddGameWindow(customtkinter.CTkToplevel):
         with open(vars.GAME_PATH, "wt") as f:
             json.dump(main.games, f)
 
+        self.destroy()
+        redraw()
+
 
 add_game_window: AddGameWindow = None
 
@@ -119,7 +122,7 @@ def win_quit():
     exit_triggered = True
 
 
-@tick.on_tick(21, 20)
+@tick.on_tick(21, 5)
 def win_update():
     global status_label, app, exited, exit_button, exit_triggered
     if app is None:
@@ -204,6 +207,14 @@ def draw():
     for i in friend_list:
         friend_list_row += 1
         i.grid(row=friend_list_row, column=0, padx=5, pady=5, sticky="ew")
+
+
+@tick.on_tick(22, 5000)
+def redraw():
+    global exited, app
+    if exited or (app is None):
+        return
+    draw()
 
 
 def open_ui():

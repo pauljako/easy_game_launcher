@@ -1,3 +1,4 @@
+import threading
 import time
 
 import messages
@@ -23,10 +24,10 @@ def handle():
             if not data:
                 disconnect()
             else:
-                received_data: list[str] = data.decode().split(vars.EGA_SEPERATOR)
+                received_data: list[str] = data.decode().replace("\n", "").split(vars.EGA_SEPERATOR)
                 if vars.VERBOSE:
                     print(f"[ EGA | Info ] Received: {received_data}")
-                answer = vars.EGA_SEPERATOR.join(messages.process_ega_messages(received_data))
+                answer = vars.EGA_SEPERATOR.join(messages.process_ega_messages(received_data)) + "\r"
                 connection.sendall(answer.encode())
 
         except:
@@ -52,3 +53,22 @@ def disconnect():
             session.exit_session()
         else:
             print("[ EGA | Error ] Session already Exited")
+
+
+def start_connect_thread():
+    if connection is None:
+        connect()
+
+
+def start_handle_thread():
+    time_started = int(time.time())
+    thread = threading.Thread(target=start_connect_thread, daemon=True)
+    thread.start()
+    while connection is None:
+        if not thread.is_alive():
+            break
+        elif int(time.time()) - time_started > 10:
+            print("[ EGA | Error ] Connection Timeout")
+            disconnect()
+            break
+

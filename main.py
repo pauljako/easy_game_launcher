@@ -25,6 +25,7 @@ if __name__ == "__main__":
     parser.add_argument("--quit", "-q", help="Quits EGL", action="store_true")
     parser.add_argument("--exit", "-e", help="Exits the Session", action="store_true")
     parser.add_argument("--close", "-c", help="Closes the Interface", action="store_true")
+    parser.add_argument("--start", "-s", help="Do nothing. Just start EGL in the Background", action="store_true")
 
     args = parser.parse_args()
 
@@ -54,6 +55,8 @@ if __name__ == "__main__":
             print("[ Main | Info ] Triggering Hook: launch")
         with open(vars.LAUNCH_GAME_MSG_PATH, "wt") as f:
             f.write(args.launch)
+    elif args.start:
+        print("[ Main | Info ] Starting in Background")
     else:
         if vars.VERBOSE:
             print("[ Main | Info ] Triggering Hook: open-ui")
