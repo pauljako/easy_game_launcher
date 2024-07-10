@@ -10,11 +10,11 @@ import messages
 
 # Load Games
 with open(vars.GAME_PATH, "rb") as f:
-    games = json.load(f)
+    games: dict = json.load(f)
 
 # Load Account
 with open(vars.ACCOUNT_PATH, "rb") as f:
-    account = json.load(f)
+    account: dict = json.load(f)
 
 if __name__ == "__main__":
 
