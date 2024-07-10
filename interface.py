@@ -215,9 +215,9 @@ def draw():
         i.grid(row=friend_list_row, column=0, padx=5, pady=5, sticky="ew")
 
     game_right_click_menu = tkinter.Menu(app, tearoff=0)
-    game_right_click_menu.add_command(label="Start", command=lambda: session.new_session(game_right_click_menu_game))
+    game_right_click_menu.add_command(label="Launch", command=lambda: session.new_session(game_right_click_menu_game))
     game_right_click_menu.add_separator()
-    game_right_click_menu.add_command(label="Remove")
+    game_right_click_menu.add_command(label="Remove", command=lambda: remove_game(game_right_click_menu_game))
 
 
 @tick.on_tick(22, 7500)
@@ -226,6 +226,16 @@ def redraw():
     if exited or (app is None):
         return
     draw()
+
+
+def remove_game(name: str):
+    if name not in main.games:
+        notification.send(f"Could not Remove {name}", "Game not Found", 4000)
+        return
+    main.games.pop(name)
+    with open(vars.GAME_PATH, "wt") as f:
+        json.dump(main.games, f)
+    redraw()
 
 
 def open_game_right_click_menu(event: tkinter.Event, game: str):
