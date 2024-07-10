@@ -19,6 +19,8 @@ exited: bool = False
 app: customtkinter.CTk = None
 exit_button: customtkinter.CTkButton
 exit_triggered: bool = False
+game_right_click_menu: tkinter.Menu = None
+game_right_click_menu_game: str = ""
 
 
 # Frame that shows the Game List
@@ -31,10 +33,14 @@ class GameFrame(customtkinter.CTkFrame):
         self.icon = customtkinter.CTkImage(light_image=icon, size=(96, 96))
         self.icon_label = customtkinter.CTkLabel(self, image=self.icon, text="")
         self.icon_label.grid(row=0, column=0, pady=10, padx=5, sticky="ew", rowspan=2)
+        self.icon_label.bind("<Button-2>", lambda x, y=name: open_game_right_click_menu(x, y))
         self.label = customtkinter.CTkLabel(self, text=name)
         self.label.grid(row=0, column=1, pady=5, padx=5, sticky="ew", columnspan=2)
+        self.label.bind("<Button-2>", lambda x, y=name: open_game_right_click_menu(x, y))
         self.launch_button = customtkinter.CTkButton(self, text="Launch", command=lambda x=name: session.new_session(x))
         self.launch_button.grid(row=1, column=1, pady=5, padx=5, sticky="ew")
+        self.launch_button.bind("<Button-2>", lambda x, y=name: open_game_right_click_menu(x, y))
+        self.bind("<Button-2>", lambda x, y=name: open_game_right_click_menu(x, y))
 
 
 # Frame that shows the Friends List
@@ -145,7 +151,7 @@ def win_update():
 
 
 def draw():
-    global status_label, app, exited, exit_button
+    global status_label, app, exited, exit_button, game_right_click_menu, game_right_click_menu_game
 
     account_frame = customtkinter.CTkFrame(app)
     account_frame.grid(row=0, column=0, padx=10, pady=5, sticky="new")
@@ -208,13 +214,24 @@ def draw():
         friend_list_row += 1
         i.grid(row=friend_list_row, column=0, padx=5, pady=5, sticky="ew")
 
+    game_right_click_menu = tkinter.Menu(app, tearoff=0)
+    game_right_click_menu.add_command(label="Start", command=lambda: session.new_session(game_right_click_menu_game))
+    game_right_click_menu.add_separator()
+    game_right_click_menu.add_command(label="Remove")
 
-@tick.on_tick(22, 5000)
+
+@tick.on_tick(22, 7500)
 def redraw():
     global exited, app
     if exited or (app is None):
         return
     draw()
+
+
+def open_game_right_click_menu(event: tkinter.Event, game: str):
+    global game_right_click_menu_game
+    game_right_click_menu_game = game
+    game_right_click_menu.tk_popup(event.x_root, event.y_root)
 
 
 def open_ui():
