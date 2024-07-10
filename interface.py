@@ -128,7 +128,7 @@ def win_quit():
     exit_triggered = True
 
 
-@tick.on_tick(21, 5)
+@tick.on_tick(21, 2)
 def win_update():
     global status_label, app, exited, exit_button, exit_triggered
     if app is None:
@@ -138,7 +138,7 @@ def win_update():
     if exit_triggered:
         if vars.VERBOSE:
             print("[ Interface | Info ] App exiting")
-        #notification.send("EGL Running", "Easy Game Launcher is still running in the Background", delay=1500)
+        # notification.send("EGL Running", "Easy Game Launcher is still running in the Background", delay=1500)
         app.destroy()
         app.update()
         app = None
