@@ -4,6 +4,8 @@ import json
 import os.path
 import sys
 import time
+
+import interface
 import tick
 import vars
 import messages
@@ -73,3 +75,73 @@ if __name__ == "__main__":
         print("[ Main | Info ] Starting Main Tick")
     while True:
         tick.tick()
+
+
+def move_game_up(game: str):
+    global games
+    if game not in games:
+        print("[ Main | Error ] Can't move Game Up, Game not found")
+        return
+
+    gm_idx = 0
+    gm_pos = 0
+
+    for gm in games.keys():
+
+        if gm == game:
+            gm_pos = gm_idx
+
+        gm_idx += 1
+
+    if gm_pos == 0:
+        gm_pos = 1
+
+    gm_list = list(games.keys())
+    gm_obj = gm_list.pop(gm_pos)
+    gm_list.insert(gm_pos - 1, gm_obj)
+
+    gm_new = {}
+
+    for gm in gm_list:
+        gm_new[gm] = games[gm]
+
+    games = gm_new
+
+    with open(vars.GAME_PATH, "wt") as fi:
+        json.dump(games, fi)
+
+    interface.redraw()
+
+
+def move_game_down(game: str):
+    global games
+    if game not in games:
+        print("[ Main | Error ] Can't move Game Down, Game not found")
+        return
+
+    gm_idx = 0
+    gm_pos = 0
+
+    for gm in games.keys():
+
+        if gm == game:
+            gm_pos = gm_idx
+
+        gm_idx += 1
+
+    gm_list = list(games.keys())
+    gm_obj = gm_list.pop(gm_pos)
+    gm_list.insert(gm_pos + 1, gm_obj)
+
+    gm_new = {}
+
+    for gm in gm_list:
+
+        gm_new[gm] = games[gm]
+
+    games = gm_new
+
+    with open(vars.GAME_PATH, "wt") as fi:
+        json.dump(games, fi)
+
+    interface.redraw()

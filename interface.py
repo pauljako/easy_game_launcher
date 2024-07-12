@@ -21,6 +21,7 @@ exit_button: customtkinter.CTkButton
 exit_triggered: bool = False
 game_right_click_menu: tkinter.Menu = None
 game_right_click_menu_game: str = ""
+game_right_click_menu_pin: tkinter.IntVar = None
 
 
 # Frame that shows the Game List
@@ -151,7 +152,7 @@ def win_update():
 
 
 def draw():
-    global status_label, app, exited, exit_button, game_right_click_menu, game_right_click_menu_game
+    global status_label, app, exited, exit_button, game_right_click_menu, game_right_click_menu_game, game_right_click_menu_pin
 
     account_frame = customtkinter.CTkFrame(app)
     account_frame.grid(row=0, column=0, padx=10, pady=5, sticky="new")
@@ -194,9 +195,23 @@ def draw():
     friend_list_row = 0
     friend_list = []
 
-    for g in main.games.keys():
-        btn_text = g
+    non_pinned_games = []
 
+    for g in main.games.keys():
+
+        if ("pinned" in main.games[g]) and (main.games[g]["pinned"] is True):
+
+            icon = Image.open(os.path.join(vars.ICON_DIR, main.games[g]["icon"]))
+
+            game_display_obj = GameFrame(game_scrollable_frame, g, icon)
+
+            game_list.append(game_display_obj)
+
+        else:
+
+            non_pinned_games.append(g)
+
+    for g in non_pinned_games:
         icon = Image.open(os.path.join(vars.ICON_DIR, main.games[g]["icon"]))
 
         game_display_obj = GameFrame(game_scrollable_frame, g, icon)
@@ -214,8 +229,15 @@ def draw():
         friend_list_row += 1
         i.grid(row=friend_list_row, column=0, padx=5, pady=5, sticky="ew")
 
+    game_right_click_menu_pin = tkinter.IntVar(value=0)
+
     game_right_click_menu = tkinter.Menu(app, tearoff=0)
     game_right_click_menu.add_command(label="Launch", command=lambda: session.new_session(game_right_click_menu_game))
+    game_right_click_menu.add_command(label="Achievements")
+    game_right_click_menu.add_separator()
+    game_right_click_menu.add_checkbutton(label="Pin", variable=game_right_click_menu_pin)
+    game_right_click_menu.add_command(label="Move Up", command=lambda: main.move_game_up(game_right_click_menu_game))
+    game_right_click_menu.add_command(label="Move Down", command=lambda: main.move_game_down(game_right_click_menu_game))
     game_right_click_menu.add_separator()
     game_right_click_menu.add_command(label="Remove", command=lambda: remove_game(game_right_click_menu_game))
 
@@ -239,9 +261,23 @@ def remove_game(name: str):
 
 
 def open_game_right_click_menu(event: tkinter.Event, game: str):
-    global game_right_click_menu_game
+    global game_right_click_menu_game, game_right_click_menu_pin
     game_right_click_menu_game = game
+    if (game in main.games) and ("pinned" in main.games[game]) and (main.games[game]["pinned"] is True):
+        before_pin = 1
+        game_right_click_menu_pin.set(1)
+    else:
+        before_pin = 0
+        game_right_click_menu_pin.set(0)
     game_right_click_menu.tk_popup(event.x_root, event.y_root)
+    if (game in main.games) and (game_right_click_menu_pin.get() != before_pin):
+        if game_right_click_menu_pin.get() == 1:
+            main.games[game]["pinned"] = True
+        else:
+            main.games[game]["pinned"] = False
+        with open(vars.GAME_PATH, "wt") as f:
+            json.dump(main.games, f)
+        redraw()
 
 
 def open_ui():
