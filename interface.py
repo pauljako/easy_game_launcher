@@ -2,6 +2,7 @@ import json
 import shutil
 import threading
 import time
+import tkinter
 import tkinter.filedialog
 import main
 import notification
@@ -292,6 +293,10 @@ def open_ui():
     app.geometry("500x550")
     app.protocol("WM_DELETE_WINDOW", win_quit)
     app.wm_protocol("WM_DELETE_WINDOW", win_quit)
+
+    icon = tkinter.PhotoImage(file="icon.png")
+    app.wm_iconphoto(True, icon)
+
     app.grid_columnconfigure(0, weight=1)
     app.grid_rowconfigure(0, weight=0)
     app.grid_rowconfigure(1, weight=1)
