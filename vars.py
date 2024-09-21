@@ -3,6 +3,7 @@ import os
 VERBOSE = True
 
 EGA_SEPERATOR = ":-:"
+EGA_PORT = 45432
 
 CONFIG_DIR = os.path.realpath(os.path.join(os.path.expanduser("~"), "EGL"))
 

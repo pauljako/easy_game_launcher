@@ -9,7 +9,6 @@ import socket
 import vars
 
 HOST = "127.0.0.1"
-PORT = 45432
 
 connection: socket.socket = None
 
@@ -24,7 +23,7 @@ def handle():
             if not data:
                 disconnect()
             else:
-                received_data: list[str] = data.decode().replace("\n", "").split(vars.EGA_SEPERATOR)
+                received_data: list[str] = data.decode().replace("\n", "").replace("\r", "").split(vars.EGA_SEPERATOR)
                 if vars.VERBOSE:
                     print(f"[ EGA | Info ] Received: {received_data}")
                 answer = vars.EGA_SEPERATOR.join(messages.process_ega_messages(received_data)) + "\r"
@@ -38,8 +37,10 @@ def handle():
 def connect():
     global connection
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((HOST, PORT))
+    sock.bind((HOST, vars.EGA_PORT))
     sock.listen()
+    if vars.VERBOSE:
+        print(f"[ EGA | Info ] Listening on Port {vars.EGA_PORT}")
     connection, addr = sock.accept()
 
 
@@ -67,7 +68,7 @@ def start_handle_thread():
     while connection is None:
         if not thread.is_alive():
             break
-        elif int(time.time()) - time_started > 10:
+        elif int(time.time()) - time_started > 60:
             print("[ EGA | Error ] Connection Timeout")
             disconnect()
             break
