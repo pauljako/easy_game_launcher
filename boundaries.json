@@ -1,0 +1,10 @@
+{
+	"name": "easy-game-launcher",
+	"de_name": "Easy Game Launcher",
+	"icon": "icon.png",
+	"command": {
+		"install": "python3 boundaries_installation.py",
+		"run": "./boundaries_run"
+	},
+	"bin": "easy-game-launcher"
+}
