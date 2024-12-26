@@ -8,10 +8,10 @@ FRIENDS_LIST: dict[str, str] = None
 
 def get_session_key() -> str | None:
     global SESSION_KEY
-    if ("server_url" not in main.account) or ("username" not in main.account) or ("password" not in main.account):
+    if ("server_url" not in main.account) or ("name" not in main.account) or ("password" not in main.account):
         return None
     server_url = main.account["server_url"]
-    username = main.account["server_url"]
+    username = main.account["name"]
     password = main.account["password"]
     req = requests.get(f"{server_url}/api/authenticate?username={username}&password={password}")
     if req.status_code != 200:

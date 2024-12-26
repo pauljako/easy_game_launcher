@@ -9,7 +9,7 @@ import notification
 import vars
 import session
 import tick
-
+import server
 import customtkinter
 import os
 from PIL import Image
@@ -47,13 +47,16 @@ class GameFrame(customtkinter.CTkFrame):
 
 # Frame that shows the Friends List
 class FriendFrame(customtkinter.CTkFrame):
-    def __init__(self, master, name: str, id: int, **kwargs):
+    def __init__(self, master, name: str, status: str, **kwargs):
         super().__init__(master, **kwargs)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
         self.label = customtkinter.CTkLabel(self, text=name)
         self.label.grid(row=0, column=0, pady=5, padx=5, sticky="ew", columnspan=2)
+        self.status_label = customtkinter.CTkLabel(self, text=status)
+        self.status_label.grid(row=1, column=0, pady=5, padx=5, sticky="ew", columnspan=2)
 
 
 # Window for adding Games
@@ -221,6 +224,10 @@ def draw():
 
     add_game_btn = customtkinter.CTkButton(game_scrollable_frame, text="Add Game", command=lambda x=app: add_game(x))
     game_list.append(add_game_btn)
+
+    if server.FRIENDS_LIST is not None:
+        for f, s in server.FRIENDS_LIST.items():
+            friend_list.append(FriendFrame(friends_scrollable_frame, f, s))
 
     for i in game_list:
         game_list_row += 1
