@@ -6,6 +6,7 @@ import sys
 import time
 
 import interface
+import server
 import tick
 import vars
 import messages
@@ -70,6 +71,11 @@ if __name__ == "__main__":
     if not os.path.exists(vars.IS_RUNNING_MSG_PATH):
         print("[ Main | Error ] Another Instance is already Running")
         sys.exit()
+
+    if "server_url" in account:
+        if vars.VERBOSE:
+            print("[ Server | Info ] Trying to connect to the EGL Server")
+        server.get_session_key()
 
     if vars.VERBOSE:
         print("[ Main | Info ] Starting Main Tick")
