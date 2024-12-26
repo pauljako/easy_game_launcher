@@ -9,11 +9,10 @@ import socket
 import vars
 
 HOST = "127.0.0.1"
+CURRENT_HANDLED_THREAD: threading.Thread = None
 
 connection: socket.socket = None
 
-
-@tick.on_tick(61, 3)
 def handle():
     global connection
     if connection is not None:
@@ -33,6 +32,13 @@ def handle():
             print("[ EGA | Error ] Error receiving Data")
             disconnect()
 
+@tick.on_tick(61, 3)
+def handle_threaded():
+    global CURRENT_HANDLED_THREAD
+    if CURRENT_HANDLED_THREAD is not None and CURRENT_HANDLED_THREAD.is_alive():
+        return
+    CURRENT_HANDLED_THREAD = threading.Thread(target=handle, daemon=True)
+    CURRENT_HANDLED_THREAD.start()
 
 def connect():
     global connection
@@ -73,3 +79,6 @@ def start_handle_thread():
             disconnect()
             break
 
+def start():
+    handle_thread = threading.Thread(target=start_handle_thread, daemon=True)
+    handle_thread.start()
