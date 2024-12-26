@@ -13,6 +13,7 @@ CURRENT_HANDLED_THREAD: threading.Thread = None
 
 connection: socket.socket = None
 
+@tick.on_tick(61, 1)
 def handle():
     global connection
     if connection is not None:
@@ -32,22 +33,21 @@ def handle():
             print("[ EGA | Error ] Error receiving Data")
             disconnect()
 
-@tick.on_tick(61, 3)
-def handle_threaded():
-    global CURRENT_HANDLED_THREAD
-    if CURRENT_HANDLED_THREAD is not None and CURRENT_HANDLED_THREAD.is_alive():
-        return
-    CURRENT_HANDLED_THREAD = threading.Thread(target=handle, daemon=True)
-    CURRENT_HANDLED_THREAD.start()
-
 def connect():
     global connection
+    if connection is not None:
+        print("[ EGA | Error ] Another EGA instance is already running")
+        return
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(60)
     sock.bind((HOST, vars.EGA_PORT))
     sock.listen()
     if vars.VERBOSE:
         print(f"[ EGA | Info ] Listening on Port {vars.EGA_PORT}")
-    connection, addr = sock.accept()
+    try:
+        connection, addr = sock.accept()
+    except socket.timeout:
+        print("[ EGA | Error ] Connection Timeout")
 
 
 def disconnect():
@@ -60,25 +60,3 @@ def disconnect():
             session.exit_session()
         else:
             print("[ EGA | Error ] Session already Exited")
-
-
-def start_connect_thread():
-    if connection is None:
-        connect()
-
-
-def start_handle_thread():
-    time_started = int(time.time())
-    thread = threading.Thread(target=start_connect_thread, daemon=True)
-    thread.start()
-    while connection is None:
-        if not thread.is_alive():
-            break
-        elif int(time.time()) - time_started > 60:
-            print("[ EGA | Error ] Connection Timeout")
-            disconnect()
-            break
-
-def start():
-    handle_thread = threading.Thread(target=start_handle_thread, daemon=True)
-    handle_thread.start()

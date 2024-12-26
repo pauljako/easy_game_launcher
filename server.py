@@ -28,7 +28,7 @@ def get_session_key() -> str | None:
     SESSION_KEY = data["session_key"]
     return data["session_key"]
 
-@tick.on_tick(80, 2000)
+@tick.on_tick(80, 10)
 def get_friends() -> dict[str, str] | None:
     global SESSION_KEY, FRIENDS_LIST
     if SESSION_KEY is None:
@@ -53,7 +53,7 @@ def get_friends() -> dict[str, str] | None:
     main.account["friends"] = FRIENDS_LIST.keys()
     return FRIENDS_LIST
 
-@tick.on_tick(81, 2000)
+@tick.on_tick(81, 10)
 def update_status():
     global SESSION_KEY
     if SESSION_KEY is None:

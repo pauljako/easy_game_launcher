@@ -30,7 +30,7 @@ class Session:
     def start(self):
         if not self.game_thread.is_alive():
             self.game_thread.start()
-        threading.Thread(target=api.start).start()
+        threading.Thread(target=api.connect).start()
 
     def set_status(self, new_status: str = "Online"):
         self.status = new_status

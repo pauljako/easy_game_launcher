@@ -133,7 +133,7 @@ def win_quit():
     exit_triggered = True
 
 
-@tick.on_tick(21, 2)
+@tick.on_tick(21, 0.25)
 def win_update():
     global status_label, app, exited, exit_button, exit_triggered
     if app is None:
@@ -250,7 +250,7 @@ def draw():
     game_right_click_menu.add_command(label="Remove", command=lambda: remove_game(game_right_click_menu_game))
 
 
-@tick.on_tick(22, 7500)
+@tick.on_tick(22, 60)
 def redraw():
     global exited, app
     if exited or (app is None):
