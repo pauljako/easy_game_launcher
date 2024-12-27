@@ -1,3 +1,4 @@
 dill
 customtkinter
 pillow
+requests
