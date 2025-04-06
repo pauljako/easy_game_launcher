@@ -2,3 +2,5 @@ dill
 customtkinter
 pillow
 requests
+minecraft-launcher-lib
+flask

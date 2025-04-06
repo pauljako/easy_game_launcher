@@ -3,3 +3,5 @@ test2.py
 .DS_Store
 .venv
 __pycache__
+.idea
+._*

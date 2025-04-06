@@ -30,3 +30,7 @@ IS_RUNNING_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "is-running"))
 KILL_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "kill"))
 
 EXIT_MSG_PATH = os.path.realpath(os.path.join(MESSAGE_PATH, "exit"))
+
+MC_REDIRECT_HOST = "localhost"
+MC_REDIRECT_PORT = "25585"
+MC_REDIRECT_URI = f"http://{MC_REDIRECT_HOST}:{MC_REDIRECT_PORT}"
