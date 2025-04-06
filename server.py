@@ -16,14 +16,14 @@ def get_session_key() -> str | None:
     try:
         req = requests.get(f"{server_url}/api/authenticate?username={username}&password={password}")
     except Exception as err:
-        print(f"[ Server | Error ] Error occured while trying to get the session key: {str(err)}")
+        print(f"[ Server | Error ] Error occurred while trying to get the session key: {str(err)}")
         return
     if req.status_code != 200:
-        print(f"[ Server | Error ] Error occured while trying to get the session key: server returned status code {req.status_code}")
+        print(f"[ Server | Error ] Error occurred while trying to get the session key: server returned status code {req.status_code}")
         return None
     data = req.json()
     if data["status"] != "success":
-        print(f"[ Server | Error ] Error occured while trying to get the session key: {data['error']}")
+        print(f"[ Server | Error ] Error occurred while trying to get the session key: {data['error']}")
         return None
     SESSION_KEY = data["session_key"]
     return data["session_key"]
@@ -37,15 +37,15 @@ def get_friends() -> dict[str, str] | None:
     try:
         req = requests.get(f"{server_url}/api/get-friends?session_key={SESSION_KEY}")
     except Exception as err:
-        print(f"[ Server | Error ] Error occured while trying to get friends: {str(err)}")
+        print(f"[ Server | Error ] Error occurred while trying to get friends: {str(err)}")
         return
     if req.status_code != 200:
         if req.status_code != 200:
-            print(f"[ Server | Error ] Error occured while trying to get friends: server returned status code {req.status_code}")
+            print(f"[ Server | Error ] Error occurred while trying to get friends: server returned status code {req.status_code}")
         return FRIENDS_LIST
     data = req.json()
     if data["status"] != "success":
-        print(f"[ Server | Error ] Error occured while trying to get friends: {data['error']}")
+        print(f"[ Server | Error ] Error occurred while trying to get friends: {data['error']}")
         if data["error"] == "invalid session key" or data["error"] == "session key expired":
             get_session_key()
         return FRIENDS_LIST
@@ -63,11 +63,11 @@ def update_status():
     try:
         req = requests.get(f"{server_url}/api/update-status?session_key={SESSION_KEY}&status={status}")
     except Exception as err:
-        print(f"[ Server | Error ] Error occured while trying to update the status: {str(err)}")
+        print(f"[ Server | Error ] Error occurred while trying to update the status: {str(err)}")
         return
     if req.status_code != 200:
-        print(f"[ Server | Error ] Error occured while trying to update the status: server returned status code {req.status_code}")
+        print(f"[ Server | Error ] Error occurred while trying to update the status: server returned status code {req.status_code}")
         return
     data = req.json()
     if data["status"] != "success":
-        print(f"[ Server | Error ] Error occured while trying to update the status: {data['error']}")
+        print(f"[ Server | Error ] Error occurred while trying to update the status: {data['error']}")
