@@ -71,3 +71,24 @@ def update_status():
     data = req.json()
     if data["status"] != "success":
         print(f"[ Server | Error ] Error occurred while trying to update the status: {data['error']}")
+
+def add_friend(username: str) -> dict[str, str]:
+    global SESSION_KEY
+    if SESSION_KEY is None:
+        return {"status": "error", "error": "unauthenticated"}
+    server_url = main.account["server_url"]
+    try:
+        req = requests.get(f"{server_url}/api/add-friend?session_key={SESSION_KEY}&friend={username}")
+    except Exception as err:
+        print(f"[ Server | Error ] Error occured while trying to add a friend: {str(err)}")
+        return {"status": "error", "error": "network error"}
+    if req.status_code != 200:
+        print(f"[ Server | Error ] Error occured while trying to add a friend: server returned status code {req.status_code}")
+        return {"status": "error", "error": str(req.status_code)}
+    data = req.json()
+    if data["status"] != "success":
+        print(f"[ Server | Error ] Error occured while trying to add a friend: {data['error']}")
+        if data["error"] == "invalid session key" or data["error"] == "session key expired":
+            get_session_key()
+        return {"status": "error", "error": data["error"]}
+    return {"status": "success"}

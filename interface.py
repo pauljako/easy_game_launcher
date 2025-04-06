@@ -116,9 +116,52 @@ class AddGameWindow(customtkinter.CTkToplevel):
         self.destroy()
         redraw()
 
+# Window for adding Friends
+class AddFriendWindow(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("300x500")
+        self.title("Add Game")
+        self.columnconfigure(0, weight=4)
+        self.columnconfigure(1, weight=1)
+
+        self.label = customtkinter.CTkLabel(self, text="Add Friend")
+        self.label.grid(padx=20, pady=20, row=0, column=0, sticky="ew", columnspan=2)
+
+        self.name_entry = customtkinter.CTkEntry(self, placeholder_text="Name")
+        self.name_entry.grid(padx=20, pady=20, row=1, column=0, sticky="ew", columnspan=2)
+
+        self.tip = customtkinter.CTkLabel(self, text="The Friend you are going to add must also add you")
+        self.tip.configure(wraplength=self.tip.winfo_width())
+        self.tip.bind('<Configure>', lambda e: self.tip.configure(wraplength=self.tip.winfo_width()))
+        self.tip.grid(padx=20, pady=20, row=2, column=0, sticky="ew", columnspan=2)
+
+        self.save_button = customtkinter.CTkButton(self, command=self.save, text="Add")
+        self.save_button.grid(padx=20, pady=20, row=3, column=0, sticky="ew", columnspan=2)
+
+    def save(self):
+
+        if self.name_entry.get() == "":
+            self.tip.configure(text="Please enter a username")
+            return
+        self.save_button.configure(state="disabled")
+        result = server.add_friend(self.name_entry.get())
+        if result["status"] == "success":
+            self.destroy
+            redraw()
+        else:
+            self.tip.configure(text="Error: " + result["error"])
+            self.save_button.configure(state="normal")
+
+
+
+        #self.destroy()
+        #redraw()
+
+
 
 add_game_window: AddGameWindow = None
-
+add_friend_window: AddFriendWindow = None
 
 def add_game(master):
     global add_game_window
@@ -127,6 +170,12 @@ def add_game(master):
     else:
         add_game_window.focus()
 
+def add_friend(master):
+    global add_friend_window
+    if add_friend_window is None or not add_friend_window.winfo_exists():
+        add_friend_window = AddFriendWindow(master)
+    else:
+        add_friend_window.focus()
 
 def win_quit():
     global exit_triggered
@@ -224,6 +273,10 @@ def draw():
 
     add_game_btn = customtkinter.CTkButton(game_scrollable_frame, text="Add Game", command=lambda x=app: add_game(x))
     game_list.append(add_game_btn)
+
+    if server.SESSION_KEY is not None:
+        add_friend_btn = customtkinter.CTkButton(friends_scrollable_frame, text="Add Friend", command=lambda x=app: add_friend(x))
+        friend_list.append(add_friend_btn)
 
     if server.FRIENDS_LIST is not None:
         for f, s in server.FRIENDS_LIST.items():
