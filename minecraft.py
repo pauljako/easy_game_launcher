@@ -3,6 +3,8 @@ import minecraft_launcher_lib
 import webbrowser
 import flask
 import multiprocessing
+
+import session
 import vars
 import main
 
@@ -69,3 +71,18 @@ def get_auth_code():
     if vars.VERBOSE:
         print(f"[ Minecraft | Info ] Code received: {code}")
     return code
+
+def get_command(instance_directory: str, version: str, offline: bool = False, java_bin: str | None = None):
+
+    minecraft_launcher_lib.install.install_minecraft_version(version, instance_directory)
+
+    if offline:
+        launch_options = minecraft_launcher_lib.utils.generate_test_options()
+    else:
+        launch_options = authenticate()
+
+    if java_bin is not None:
+        launch_options["executablePath"] = java_bin
+
+    minecraft_command = minecraft_launcher_lib.command.get_minecraft_command(version, instance_directory, launch_options)
+    return minecraft_command
